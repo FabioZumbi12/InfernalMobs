@@ -9,3 +9,6 @@ You can use it for private purposes or for non-commercial purposes if you give t
 You MUST also link your changed source.
 
 Thank you.
+
+---
+Original author repository: https://bitbucket.org/Eliminator/infernalmobs/overview

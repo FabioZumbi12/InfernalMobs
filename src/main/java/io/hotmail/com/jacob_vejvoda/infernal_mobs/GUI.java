@@ -75,26 +75,20 @@ public class GUI implements Listener {
     @SuppressWarnings("deprecation")
     private static void showBossBar(Player p, Entity e) {
         ArrayList<String> oldMobAbilityList = plugin.findMobAbilities(e.getUniqueId());
-        String tittle;
-        if (plugin.getConfig().getString("bossBarsName") != null) {
-            tittle = plugin.getConfig().getString("bossBarsName");
-        } else
-            tittle = "&fLevel <powers> &fInfernal <mobName>";
-        String mobName = e.getType().getName();
+        String tittle = plugin.getConfig().getString("bossBarsName", "&fLevel <powers> &fInfernal <mobName>");
+        String mobName = e.getType().getName().replace("_", " ");
         if (e.getType().equals(EntityType.SKELETON)) {
             Skeleton sk = (Skeleton) e;
             if (sk.getSkeletonType().equals(Skeleton.SkeletonType.WITHER)) {
                 mobName = "WitherSkeleton";
             }
-        } else if (e.getType().equals(EntityType.HORSE)) {
-            mobName = "Horse";
         }
-        String prefix = plugin.getConfig().getString("namePrefix");
+        String prefix = plugin.getConfig().getString("namePrefix", "&fInfernal");
         if (plugin.getConfig().getString("levelPrefixs." + oldMobAbilityList.size()) != null) {
             prefix = plugin.getConfig().getString("levelPrefixs." + oldMobAbilityList.size());
         }
-        tittle = tittle.replace("<prefix>", prefix);
-        tittle = tittle.replace("<mobName>", mobName);
+        tittle = tittle.replace("<prefix>", prefix.substring(0, 1).toUpperCase() + prefix.substring(1));
+        tittle = tittle.replace("<mobName>", mobName.substring(0, 1).toUpperCase() + mobName.substring(1));
         tittle = tittle.replace("<mobLevel>", oldMobAbilityList.size() + "");
         String abilities = plugin.generateString(5, oldMobAbilityList);
         int count = 4;
@@ -110,7 +104,7 @@ public class GUI implements Listener {
             System.out.println("showBossBar error: ");
             x.printStackTrace();
         }
-        tittle = tittle.replace("<abilities>", abilities);
+        tittle = tittle.replace("<abilities>", abilities.substring(0, 1).toUpperCase() + abilities.substring(1));
         tittle = ChatColor.translateAlternateColorCodes('&', tittle);
 
         if (!bossBars.containsKey(e)) {
@@ -250,32 +244,25 @@ public class GUI implements Listener {
     @SuppressWarnings("deprecation")
     public String getMobNameTag(Entity entity) {
         ArrayList<String> oldMobAbilityList = plugin.findMobAbilities(entity.getUniqueId());
-        //System.out.println("OMAL: " + oldMobAbilityList);
         String tittle = null;
         try {
-            if (plugin.getConfig().getString("nameTagsName") != null) {
-                tittle = plugin.getConfig().getString("nameTagsName");
-            } else {
-                tittle = "&fInfernal <mobName>";
-            }
-            String mobName = entity.getType().getName();
-            if (entity.getType().equals(EntityType.HORSE)) {
-                mobName = "Horse";
-            }
-            tittle = tittle.replace("<mobName>", mobName);
+            tittle = plugin.getConfig().getString("nameTagsName", "&fInfernal <mobName>");
+            String mobName = entity.getType().getName().replace("_", " ");
+
+            tittle = tittle.replace("<mobName>", mobName.substring(0, 1).toUpperCase() + mobName.substring(1));
             tittle = tittle.replace("<mobLevel>", "" + oldMobAbilityList.size());
-            String abilities = plugin.generateString(5, oldMobAbilityList);
+            String abilities;
             int count = 4;
             do {
                 abilities = plugin.generateString(count, oldMobAbilityList);
                 count--;
             } while ((tittle.length() + abilities.length() + mobName.length()) > 64);
-            tittle = tittle.replace("<abilities>", abilities);
+            tittle = tittle.replace("<abilities>", abilities.substring(0, 1).toUpperCase() + abilities.substring(1));
             //Prefix
             String prefix = plugin.getConfig().getString("namePrefix");
             if (plugin.getConfig().getString("levelPrefixs." + oldMobAbilityList.size()) != null)
                 prefix = plugin.getConfig().getString("levelPrefixs." + oldMobAbilityList.size());
-            tittle = tittle.replace("<prefix>", prefix);
+            tittle = tittle.replace("<prefix>", prefix.substring(0, 1).toUpperCase() + prefix.substring(1));
             tittle = ChatColor.translateAlternateColorCodes('&', tittle);
         } catch (Exception x) {
             plugin.getLogger().log(Level.SEVERE, x.getMessage());

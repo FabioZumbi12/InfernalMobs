@@ -29,18 +29,12 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 public class EventListener implements Listener {
-    static infernal_mobs plugin;
-    HashMap<String, Long> spawnerMap = new HashMap<String, Long>();
+    private static infernal_mobs plugin;
+    private HashMap<String, Long> spawnerMap = new HashMap<>();
 
-    public EventListener(infernal_mobs instance) {
+    EventListener(infernal_mobs instance) {
         plugin = instance;
     }
-
-//	@EventHandler(priority=EventPriority.HIGH)
-//	public void onInventoryClick(InventoryClickEvent e){
-//		System.out.println("RSlot: " + e.getRawSlot());
-//		System.out.println("Slot: " + e.getSlot());
-//	}
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
@@ -53,7 +47,7 @@ public class EventListener implements Listener {
             String name = "";
             try {
                 name = ent.getCustomName();
-            } catch (Exception localException) {
+            } catch (Exception ignored) {
             }
             p.sendMessage("§eName: §f" + name);
             p.sendMessage("§eSaved: §f" + plugin.mobSaveFile.getString(ent.getUniqueId().toString()));
@@ -106,11 +100,7 @@ public class EventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onChunkLoad(ChunkLoadEvent e) throws Exception {
-        //Entity[] arrayOfEntity;
-        //int j = (arrayOfEntity = e.getChunk().getEntities()).length;
-        //for (int i = 0; i < j; i++){
-        //	Entity ent = arrayOfEntity[i];
+    public void onChunkLoad(ChunkLoadEvent e) {
         for (Entity ent : e.getChunk().getEntities()) {
             if (((ent instanceof LivingEntity)) && (ent.getCustomName() != null) && (plugin.mobSaveFile.getString(ent.getUniqueId().toString()) != null)) {
                 plugin.giveMobPowers(ent);
@@ -119,7 +109,7 @@ public class EventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onChunkUnload(ChunkUnloadEvent e) throws Exception {
+    public void onChunkUnload(ChunkUnloadEvent e) {
         for (Entity ent : e.getChunk().getEntities()) {
             int s = plugin.idSearch(ent.getUniqueId());
             if (s != -1) {
@@ -129,7 +119,7 @@ public class EventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onEntityAttack(EntityDamageByEntityEvent event) throws Exception {
+    public void onEntityAttack(EntityDamageByEntityEvent event) {
         try {
             Entity attacker = event.getDamager();
             Entity victim = event.getEntity();
@@ -193,15 +183,15 @@ public class EventListener implements Listener {
                     if (plugin.mobSaveFile.getString("infernalSpanwers." + name) != null) {
                         if (this.spawnerMap.get(name) == null) {
                             plugin.makeInfernal(event.getEntity(), true);
-                            this.spawnerMap.put(name, Long.valueOf(plugin.serverTime));
+                            this.spawnerMap.put(name, plugin.serverTime);
                         } else {
-                            long startTime = this.spawnerMap.get(name).longValue();
+                            long startTime = this.spawnerMap.get(name);
                             long endTime = plugin.serverTime;
                             long timePassed = endTime - startTime;
                             int delay = plugin.mobSaveFile.getInt("infernalSpanwers." + name);
                             if (timePassed >= delay) {
                                 plugin.makeInfernal(event.getEntity(), true);
-                                this.spawnerMap.put(name, Long.valueOf(plugin.serverTime));
+                                this.spawnerMap.put(name, plugin.serverTime);
                             } else {
                                 event.setCancelled(true);
                             }
@@ -216,21 +206,10 @@ public class EventListener implements Listener {
                 return;
             }
             String entName = event.getEntity().getType().name();
-//			System.out.println("Mob Spawn 3");
-//			System.out.println((plugin.getConfig().getList("mobworlds").contains(world.getName())) || (plugin.getConfig().getList("mobworlds").contains("<all>")));
-//			System.out.println((plugin.getConfig().getList("enabledmobs").contains(entName)));
-//			System.out.println(plugin.getConfig().getList("enabledmobs"));
-//			System.out.println(entName);
-//			for(EntityType et : EntityType.values())
-//				System.out.println(et.name());
-//			System.out.println((plugin.getConfig().getInt("naturalSpawnHeight") < event.getEntity().getLocation().getY()));
-//			System.out.println((plugin.getConfig().getList("enabledSpawnReasons").contains(event.getSpawnReason().toString())));
-//			System.out.println(event.getSpawnReason());
-            if (((plugin.getConfig().getList("mobworlds", new ArrayList<>()).contains(world.getName())) || (plugin.getConfig().getList("mobworlds", new ArrayList<>()).contains("<all>"))) &&
-                    (plugin.getConfig().getList("enabledmobs", new ArrayList<>()).contains(entName)) &&
+            if (((plugin.getConfig().getStringList("mobworlds").contains(world.getName())) || (plugin.getConfig().getStringList("mobworlds").contains("<all>"))) &&
+                    (plugin.getConfig().getStringList("enabledmobs").contains(entName)) &&
                     (plugin.getConfig().getInt("naturalSpawnHeight") < event.getEntity().getLocation().getY()) &&
-                    (plugin.getConfig().getList("enabledSpawnReasons", new ArrayList<>()).contains(event.getSpawnReason().toString()))) {
-                //System.out.println("Mob Spawn 4");
+                    (plugin.getConfig().getStringList("enabledSpawnReasons").contains(event.getSpawnReason().toString()))) {
                 plugin.makeInfernal(event.getEntity(), false);
             }
         }
