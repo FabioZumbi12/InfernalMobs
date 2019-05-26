@@ -257,7 +257,7 @@ public class EventListener implements Listener {
                 if (aList.contains("ghost")) {
                     plugin.spawnGhost(event.getEntity().getLocation());
                 }
-                Location dropSpot = null;
+                Location dropSpot;
                 if (aList.contains("molten")) {
                     Location lavaSpot = event.getEntity().getLocation();
                     dropSpot = lavaSpot;

@@ -268,8 +268,6 @@ public class infernal_mobs extends JavaPlugin implements Listener {
     }
 
     void makeInfernal(final Entity e, final boolean fixed) {
-
-
         String entName = e.getType().name();
         if ((!e.hasMetadata("NPC")) && (!e.hasMetadata("shopkeeper"))) {
             if (!fixed) {
