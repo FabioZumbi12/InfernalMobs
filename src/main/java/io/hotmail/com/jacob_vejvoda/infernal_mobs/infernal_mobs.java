@@ -38,7 +38,7 @@ public class infernal_mobs extends JavaPlugin implements Listener {
     long serverTime = 0L;
     private WizardlyMagic wMagic;
     private int loops;
-    ArrayList<Mob> infernalList = new ArrayList();
+    ArrayList<InfernalMob> infernalList = new ArrayList();
     private ArrayList<UUID> dropedLootList = new ArrayList();
     private File lootYML = new File(getDataFolder(), "loot.yml");
     File saveYML = new File(getDataFolder(), "save.yml");
@@ -254,11 +254,11 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                     aList = getAbilitiesAmount(ent);
                 }
             }
-            Mob newMob;
+            InfernalMob newMob;
             if (aList.contains("1up")) {
-                newMob = new Mob(ent, id, true, aList, 2, getEffect());
+                newMob = new InfernalMob(ent, id, true, aList, 2, getEffect());
             } else {
-                newMob = new Mob(ent, id, true, aList, 1, getEffect());
+                newMob = new InfernalMob(ent, id, true, aList, 1, getEffect());
             }
             if (aList.contains("flying")) {
                 makeFly(ent);
@@ -268,7 +268,8 @@ public class infernal_mobs extends JavaPlugin implements Listener {
     }
 
     void makeInfernal(final Entity e, final boolean fixed) {
-        boolean mobEnabled = true;
+
+
         String entName = e.getType().name();
         if ((!e.hasMetadata("NPC")) && (!e.hasMetadata("shopkeeper"))) {
             if (!fixed) {
@@ -283,78 +284,82 @@ public class infernal_mobs extends JavaPlugin implements Listener {
             }
             final UUID id = e.getUniqueId();
             final int chance = getConfig().getInt("chance");
-            final boolean mobEnabled2 = mobEnabled;
-            final Entity ent = e;
-            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-                public void run() {
-                    String entName = e.getType().name();
-                    if ((!ent.isDead()) && (ent.isValid()) && (
-                            ((getConfig().getList("enabledmobs", new ArrayList<>()).contains(entName)) && (mobEnabled2)) || ((fixed) &&
-                                    (idSearch(id) == -1)))) {
-                        //Default
-                        int min = 1;
-                        int max = chance;
-                        //Pe Mob
-                        int mc = getConfig().getInt("mobChances." + entName);
-                        if (mc > 0)
-                            max = mc;
-                        if (fixed)
-                            max = 1;
-                        //int randomNum = new Random().nextInt(max - min + 1) + min;
-                        int randomNum = rand(min, max);
-                        if (randomNum == 1) {
-                            ArrayList<String> aList = getAbilitiesAmount(ent);
-                            if (infernal_mobs.this.getConfig().getString("levelChance." + aList.size()) != null) {
-                                int sc = infernal_mobs.this.getConfig().getInt("levelChance." + aList.size());
-                                int randomNum2 = new Random().nextInt(sc - min + 1) + min;
-                                if (randomNum2 != 1) {
-                                    return;
-                                }
+            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, () -> {
+                String entName1 = e.getType().name();
+                if ((!e.isDead()) && (e.isValid()) && (
+                        ((getConfig().getStringList("enabledmobs").contains(entName1))) || ((fixed) &&
+                                (idSearch(id) == -1)))) {
+                    //Default
+                    int min = 1;
+                    int max = chance;
+                    //Pe InfernalMob
+                    int mc = getConfig().getInt("mobChances." + entName1);
+                    if (mc > 0)
+                        max = mc;
+                    if (fixed)
+                        max = 1;
+                    //int randomNum = new Random().nextInt(max - min + 1) + min;
+                    int randomNum = rand(min, max);
+                    if (randomNum == 1) {
+                        ArrayList<String> aList = getAbilitiesAmount(e);
+                        if (infernal_mobs.this.getConfig().getString("levelChance." + aList.size()) != null) {
+                            int sc = infernal_mobs.this.getConfig().getInt("levelChance." + aList.size());
+                            int randomNum2 = new Random().nextInt(sc - min + 1) + min;
+                            if (randomNum2 != 1) {
+                                return;
                             }
-                            Mob newMob = null;
-                            if (aList.contains("1up")) {
-                                newMob = new Mob(ent, id, true, aList, 2, infernal_mobs.this.getEffect());
-                            } else {
-                                newMob = new Mob(ent, id, true, aList, 1, infernal_mobs.this.getEffect());
-                            }
-                            if (aList.contains("flying")) {
-                                infernal_mobs.this.makeFly(ent);
-                            }
-                            infernal_mobs.this.infernalList.add(newMob);
-                            infernal_mobs.this.gui.setName(ent);
-                            infernal_mobs.this.giveMobGear(ent, true);
-                            infernal_mobs.this.addHealth(ent, aList);
-                            if (infernal_mobs.this.getConfig().getBoolean("enableSpawnMessages")) {
-                                if (infernal_mobs.this.getConfig().getList("spawnMessages") != null) {
-                                    ArrayList<String> spawnMessageList = (ArrayList) infernal_mobs.this.getConfig().getList("spawnMessages");
-                                    Random randomGenerator = new Random();
-                                    int index = randomGenerator.nextInt(spawnMessageList.size());
-                                    String spawnMessage = spawnMessageList.get(index);
+                        }
+                        InfernalMob newMob;
+                        if (aList.contains("1up")) {
+                            newMob = new InfernalMob(e, id, true, aList, 2, infernal_mobs.this.getEffect());
+                        } else {
+                            newMob = new InfernalMob(e, id, true, aList, 1, infernal_mobs.this.getEffect());
+                        }
 
-                                    spawnMessage = ChatColor.translateAlternateColorCodes('&', spawnMessage);
-                                    if (ent.getCustomName() != null) {
-                                        spawnMessage = spawnMessage.replace("mob", ent.getCustomName());
-                                    } else {
-                                        spawnMessage = spawnMessage.replace("mob", ent.getType().toString().toLowerCase());
+                        //fire event
+                        InfernalSpawnEvent infernalEvent = new InfernalSpawnEvent(e, newMob);
+                        Bukkit.getPluginManager().callEvent(infernalEvent);
+                        if (infernalEvent.isCancelled()) {
+                            return;
+                        }
+
+                        if (aList.contains("flying")) {
+                            infernal_mobs.this.makeFly(e);
+                        }
+                        infernal_mobs.this.infernalList.add(newMob);
+                        infernal_mobs.this.gui.setName(e);
+                        infernal_mobs.this.giveMobGear(e, true);
+                        infernal_mobs.this.addHealth(e, aList);
+                        if (infernal_mobs.this.getConfig().getBoolean("enableSpawnMessages")) {
+                            if (infernal_mobs.this.getConfig().getList("spawnMessages") != null) {
+                                ArrayList<String> spawnMessageList = (ArrayList) infernal_mobs.this.getConfig().getList("spawnMessages");
+                                Random randomGenerator = new Random();
+                                int index = randomGenerator.nextInt(spawnMessageList.size());
+                                String spawnMessage = spawnMessageList.get(index);
+
+                                spawnMessage = ChatColor.translateAlternateColorCodes('&', spawnMessage);
+                                if (e.getCustomName() != null) {
+                                    spawnMessage = spawnMessage.replace("mob", e.getCustomName());
+                                } else {
+                                    spawnMessage = spawnMessage.replace("mob", e.getType().toString().toLowerCase());
+                                }
+                                int r = infernal_mobs.this.getConfig().getInt("spawnMessageRadius");
+                                if (r == -1) {
+                                    for (Player p : e.getWorld().getPlayers()) {
+                                        p.sendMessage(spawnMessage);
                                     }
-                                    int r = infernal_mobs.this.getConfig().getInt("spawnMessageRadius");
-                                    if (r == -1) {
-                                        for (Player p : ent.getWorld().getPlayers()) {
+                                } else if (r == -2) {
+                                    Bukkit.broadcastMessage(spawnMessage);
+                                } else {
+                                    for (Entity e1 : e.getNearbyEntities(r, r, r)) {
+                                        if ((e1 instanceof Player)) {
+                                            Player p = (Player) e1;
                                             p.sendMessage(spawnMessage);
                                         }
-                                    } else if (r == -2) {
-                                        Bukkit.broadcastMessage(spawnMessage);
-                                    } else {
-                                        for (Entity e : ent.getNearbyEntities(r, r, r)) {
-                                            if ((e instanceof Player)) {
-                                                Player p = (Player) e;
-                                                p.sendMessage(spawnMessage);
-                                            }
-                                        }
                                     }
-                                } else {
-                                    System.out.println("No valid spawn messages found!");
                                 }
+                            } else {
+                                System.out.println("No valid spawn messages found!");
                             }
                         }
                     }
@@ -369,7 +374,7 @@ public class infernal_mobs extends JavaPlugin implements Listener {
         if (getConfig().getBoolean("healthByPower")) {
             int mobIndex = idSearch(ent.getUniqueId());
             try {
-                Mob m = this.infernalList.get(mobIndex);
+                InfernalMob m = this.infernalList.get(mobIndex);
                 setHealth = (float) (maxHealth * m.abilityList.size());
             } catch (Exception e) {
                 setHealth = (float) (maxHealth * 5.0D);
@@ -470,11 +475,11 @@ public class infernal_mobs extends JavaPlugin implements Listener {
             aList.add("sapper");
             aList.add("confusing");
         }
-        Mob newMob;
+        InfernalMob newMob;
         if (evil) {
-            newMob = new Mob(g, g.getUniqueId(), false, aList, 1, "smoke:2:12");
+            newMob = new InfernalMob(g, g.getUniqueId(), false, aList, 1, "smoke:2:12");
         } else {
-            newMob = new Mob(g, g.getUniqueId(), false, aList, 1, "cloud:0:8");
+            newMob = new InfernalMob(g, g.getUniqueId(), false, aList, 1, "cloud:0:8");
         }
         this.infernalList.add(newMob);
     }
@@ -942,7 +947,7 @@ public class infernal_mobs extends JavaPlugin implements Listener {
         String effect = "mobSpawnerFire";
         try {
             //Get Enabled Particles
-            ArrayList<String> partTypes = (ArrayList<String>) getConfig().getStringList("mobParticles");
+            List<String> partTypes = getConfig().getStringList("mobParticles");
             //Get Random Particle
             effect = partTypes.get(new Random().nextInt(partTypes.size()));
         } catch (Exception e) {
@@ -1028,9 +1033,9 @@ public class infernal_mobs extends JavaPlugin implements Listener {
         try {
             //GUI Bars And Stuff
             scoreCheck();
-            //Mob Stuff
-            ArrayList<Mob> tmp = (ArrayList<Mob>) infernalList.clone();
-            for (Mob m : tmp) {
+            //InfernalMob Stuff
+            ArrayList<InfernalMob> tmp = (ArrayList<InfernalMob>) infernalList.clone();
+            for (InfernalMob m : tmp) {
                 final Entity mob = m.entity;
                 UUID id = mob.getUniqueId();
                 int index = idSearch(id);
@@ -1070,12 +1075,12 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                                 }
                             } else if (ability.equals("1up")) {
                                 if (((Damageable) mob).getHealth() <= 5) {
-                                    Mob oneUpper = infernalList.get(index);
+                                    InfernalMob oneUpper = infernalList.get(index);
                                     if (oneUpper.lives > 1) {
                                         //System.out.print("1");//-------------------------------Debug
                                         ((Damageable) mob).setHealth(((Damageable) mob).getMaxHealth());
                                         //System.out.print("UP!");//-------------------------------Debug
-                                        //Mob newMob = new Mob(mob, id, mob.getWorld(), oneUpper.infernal, abilityList, 1, getEffect());
+                                        //InfernalMob newMob = new InfernalMob(mob, id, mob.getWorld(), oneUpper.infernal, abilityList, 1, getEffect());
                                         //infernalList.set(index, newMob);
                                         oneUpper.setLives(oneUpper.lives - 1);
                                     }
@@ -1354,7 +1359,7 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                 }
             }
         }
-        //Do Mob Effects
+        //Do InfernalMob Effects
         try {
             UUID id = mob.getUniqueId();
             if (idSearch(id) != -1) {
@@ -1452,11 +1457,11 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                         System.out.println("Infernal Mobs can't find mob type: " + mobName + "!");
                         return;
                     }
-                    Mob newMob;
+                    InfernalMob newMob;
                     if (aList.contains("1up")) {
-                        newMob = new Mob(newEnt, newEnt.getUniqueId(), true, aList, 2, getEffect());
+                        newMob = new InfernalMob(newEnt, newEnt.getUniqueId(), true, aList, 2, getEffect());
                     } else {
-                        newMob = new Mob(newEnt, newEnt.getUniqueId(), true, aList, 1, getEffect());
+                        newMob = new InfernalMob(newEnt, newEnt.getUniqueId(), true, aList, 1, getEffect());
                     }
                     if (aList.contains("flying")) {
                         makeFly(newEnt);
@@ -1865,8 +1870,8 @@ public class infernal_mobs extends JavaPlugin implements Listener {
     }
 
     int idSearch(UUID id) {
-        Mob idMob = null;
-        for (Mob mob : this.infernalList) {
+        InfernalMob idMob = null;
+        for (InfernalMob mob : this.infernalList) {
             if (mob.id.equals(id)) {
                 idMob = mob;
             }
@@ -1878,7 +1883,7 @@ public class infernal_mobs extends JavaPlugin implements Listener {
     }
 
     ArrayList<String> findMobAbilities(UUID id) {
-        for (Mob mob : this.infernalList) {
+        for (InfernalMob mob : this.infernalList) {
             if (mob.id.equals(id)) {
                 ArrayList<String> abilityList = mob.abilityList;
                 return abilityList;
@@ -2166,12 +2171,12 @@ public class infernal_mobs extends JavaPlugin implements Listener {
         //cspawn <mob> <world> <x> <y> <z> <ability> <ability>
         if ((EntityType.fromName(mob) != null)) {
             Entity ent = l.getWorld().spawnEntity(l, EntityType.fromName(mob));//
-            Mob newMob;
+            InfernalMob newMob;
             UUID id = ent.getUniqueId();
             if (abList.contains("1up")) {
-                newMob = new Mob(ent, id, true, abList, 2, getEffect());
+                newMob = new InfernalMob(ent, id, true, abList, 2, getEffect());
             } else {
-                newMob = new Mob(ent, id, true, abList, 1, getEffect());
+                newMob = new InfernalMob(ent, id, true, abList, 1, getEffect());
             }
             if (abList.contains("flying")) {
                 makeFly(ent);
@@ -2315,12 +2320,12 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                                 exmsg = false;
                             }
                             ArrayList<String> abList = getAbilitiesAmount(ent);
-                            Mob newMob;
+                            InfernalMob newMob;
                             UUID id = ent.getUniqueId();
                             if (abList.contains("1up")) {
-                                newMob = new Mob(ent, id, true, abList, 2, getEffect());
+                                newMob = new InfernalMob(ent, id, true, abList, 2, getEffect());
                             } else {
-                                newMob = new Mob(ent, id, true, abList, 1, getEffect());
+                                newMob = new InfernalMob(ent, id, true, abList, 1, getEffect());
                             }
                             if (abList.contains("flying")) {
                                 makeFly(ent);
@@ -2355,12 +2360,12 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                                         return true;
                                     }
                                 }
-                                Mob newMob;
+                                InfernalMob newMob;
                                 UUID id = ent.getUniqueId();
                                 if (spesificAbList.contains("1up")) {
-                                    newMob = new Mob(ent, id, true, spesificAbList, 2, getEffect());
+                                    newMob = new InfernalMob(ent, id, true, spesificAbList, 2, getEffect());
                                 } else {
-                                    newMob = new Mob(ent, id, true, spesificAbList, 1, getEffect());
+                                    newMob = new InfernalMob(ent, id, true, spesificAbList, 1, getEffect());
                                 }
                                 if (spesificAbList.contains("flying")) {
                                     makeFly(ent);
@@ -2414,7 +2419,7 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                                 if (idSearch(mobId) != -1) {
                                     oldMobAbilityList = findMobAbilities(mobId);
                                     if (!targeted.isDead()) {
-                                        sender.sendMessage("--Targeted Mob's Abilities--");
+                                        sender.sendMessage("--Targeted InfernalMob's Abilities--");
                                         sender.sendMessage(oldMobAbilityList.toString());
                                     }
                                 } else {

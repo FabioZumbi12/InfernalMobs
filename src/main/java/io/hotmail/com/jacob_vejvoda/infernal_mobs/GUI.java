@@ -32,7 +32,7 @@ public class GUI implements Listener {
         //System.out.println("fixBar");
         double dis = 26.0D;
         Entity b = null;
-        for (Mob m : plugin.infernalList) {
+        for (InfernalMob m : plugin.infernalList) {
             if (m.entity.getWorld().equals(p.getWorld())) {
                 Entity boss = m.entity;
                 if (p.getLocation().distance(boss.getLocation()) < dis) {
@@ -117,7 +117,7 @@ public class GUI implements Listener {
             String ls = plugin.getConfig().getString("bossBarSettings.perLevel." + oldMobAbilityList.size() + ".style");
             if (ls != null)
                 bs = BarStyle.valueOf(ls);
-            //Per Mob Setings
+            //Per InfernalMob Setings
             String mc = plugin.getConfig().getString("bossBarSettings.perMob." + e.getType().getName() + ".color");
             if (mc != null)
                 bc = BarColor.valueOf(mc);

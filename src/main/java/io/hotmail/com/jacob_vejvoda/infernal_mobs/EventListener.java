@@ -173,7 +173,6 @@ public class EventListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onMobSpawn(CreatureSpawnEvent event) {
-        //System.out.println("Mob Spawn 1");
         World world = event.getEntity().getWorld();
         if ((!event.getEntity().hasMetadata("NPC")) && (!event.getEntity().hasMetadata("shopkeeper")) && event.getEntity().getCustomName() == null) {
             if (event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER)) {
@@ -201,7 +200,7 @@ public class EventListener implements Listener {
 					}*/
                 }
             }
-            //System.out.println("Mob Spawn 2");
+            //System.out.println("InfernalMob Spawn 2");
             if ((event.getEntity().hasMetadata("NPC")) || (event.getEntity().hasMetadata("shopkeeper"))) {
                 return;
             }

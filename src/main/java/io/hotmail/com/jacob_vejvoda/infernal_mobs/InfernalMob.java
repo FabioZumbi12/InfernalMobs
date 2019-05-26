@@ -5,7 +5,7 @@ import org.bukkit.entity.Entity;
 import java.util.ArrayList;
 import java.util.UUID;
 
-class Mob {
+class InfernalMob {
     private boolean infernal;
     Entity entity;
     UUID id;
@@ -13,7 +13,7 @@ class Mob {
     String effect;
     ArrayList<String> abilityList;
 
-    Mob(Entity type, UUID i, boolean in, ArrayList<String> l, int li, String e) {
+    InfernalMob(Entity type, UUID i, boolean in, ArrayList<String> l, int li, String e) {
         this.entity = type;
         this.id = i;
         this.infernal = in;
