@@ -1042,10 +1042,10 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                     Location feet = mob.getLocation();
                     Location head = mob.getLocation();
                     head.setY(head.getY() + 1);
-                    if (getConfig().getBoolean("enableParticles") == true) {
+                    if (getConfig().getBoolean("enableParticles")) {
                         displayEffect(feet, m.effect);
                         //mob.getWorld().playEffect(feet, Effect.ENDER_SIGNAL, 1);
-                        if (isSmall(mob) == false) {
+                        if (!isSmall(mob)) {
                             displayEffect(head, m.effect);
                             //mob.getWorld().playEffect(head, Effect.ENDER_SIGNAL, 1);
                         }
@@ -1068,7 +1068,7 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                             if (ability.equals("cloaked")) {
                                 ((LivingEntity) mob).addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 40, 1), true);
                             } else if (ability.equals("armoured")) {
-                                if ((!(mob instanceof Skeleton)) && (!(mob instanceof Zombie)) && (!(mob instanceof PigZombie))) {
+                                if ((!(mob instanceof Skeleton)) && (!(mob instanceof Zombie))) {
                                     ((LivingEntity) mob).addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 40, 1), true);
                                 }
                             } else if (ability.equals("1up")) {
@@ -2074,16 +2074,19 @@ public class infernal_mobs extends JavaPlugin implements Listener {
     }
 
     private void displayParticle(String effect, World w, double x, double y, double z, double radius, int speed, int amount) {
+        amount = (amount <= 0) ? 1 : amount;
         Location l = new Location(w, x, y, z);
         try {
-            if (radius == 0) {
+            if (radius <= 0) {
                 w.spawnParticle(Particle.valueOf(effect), l, 0, 0, 0, speed, amount);
             } else {
-                ArrayList<Location> ll = getArea(l, radius, 0.2);
-                for (int i = 0; i < amount; i++) {
-                    int index = new Random().nextInt(ll.size());
-                    w.spawnParticle(Particle.valueOf(effect), ll.get(index), 1, 0, 0, speed, 1);
-                    ll.remove(index);
+                List<Location> ll = getArea(l, radius, 0.2);
+                if (ll.size() > 0){
+                    for (int i = 0; i < amount; i++) {
+                        int index = new Random().nextInt(ll.size());
+                        w.spawnParticle(Particle.valueOf(effect), ll.get(index), 1, 0, 0, speed, 1);
+                        ll.remove(index);
+                    }
                 }
             }
         } catch (Exception ex) {
@@ -2092,8 +2095,8 @@ public class infernal_mobs extends JavaPlugin implements Listener {
         }
     }
 
-    private ArrayList<Location> getArea(Location l, double r, double t) {
-        ArrayList<Location> ll = new ArrayList();
+    private List<Location> getArea(Location l, double r, double t) {
+        List<Location> ll = new ArrayList();
         for (double x = l.getX() - r; x < l.getX() + r; x += t) {
             for (double y = l.getY() - r; y < l.getY() + r; y += t) {
                 for (double z = l.getZ() - r; z < l.getZ() + r; z += t) {
