@@ -2200,8 +2200,6 @@ public class infernal_mobs extends JavaPlugin implements Listener {
 
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args){
         Set<String> commands = new HashSet<>(Arrays.asList("reload", "worldInfo", "error", "getloot", "setloot", "giveloot", "abilities", "showAbilities", "setInfernal", "spawn", "cspawn", "pspawn", "kill", "killall"));
-
-        sender.sendMessage("Tamanho: " + args.length);
         if (sender.hasPermission("infernal_mobs.commands")) {
 
             List<String> newTab = new ArrayList<>();
