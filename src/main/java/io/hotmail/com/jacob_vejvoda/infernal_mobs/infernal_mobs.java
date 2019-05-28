@@ -7,7 +7,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -50,14 +49,14 @@ public class infernal_mobs extends JavaPlugin implements Listener {
     ArrayList<Player> errorList = new ArrayList();
     ArrayList<Player> levitateList = new ArrayList();
 
-    private static List<Block> getSphere(Block block1, int radius) {
+    private static List<Block> getSphere(Block block1) {
         List<Block> blocks = new LinkedList();
         double xi = block1.getLocation().getX() + 0.5D;
         double yi = block1.getLocation().getY() + 0.5D;
         double zi = block1.getLocation().getZ() + 0.5D;
         for (int v1 = 0; v1 <= 90; v1++) {
-            double y = Math.sin(0.017453292519943295D * v1) * radius;
-            double r = Math.cos(0.017453292519943295D * v1) * radius;
+            double y = Math.sin(0.017453292519943295D * v1) * 4;
+            double r = Math.cos(0.017453292519943295D * v1) * 4;
             if (v1 == 90) {
                 r = 0.0D;
             }
@@ -189,7 +188,7 @@ public class infernal_mobs extends JavaPlugin implements Listener {
         //Register Wizardly Magic
         try {
             wMagic = (WizardlyMagic) Bukkit.getServer().getPluginManager().getPlugin("WizardlyMagic");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         applyEffect();
         reloadPowers();
@@ -298,13 +297,13 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                         max = mc;
                     if (fixed)
                         max = 1;
-                    //int randomNum = new Random().nextInt(max - min + 1) + min;
+                    //int randomNum = new Random().nextInt(max - min) + min;
                     int randomNum = rand(min, max);
                     if (randomNum == 1) {
                         List<String> aList = getAbilitiesAmount(e);
                         if (infernal_mobs.this.getConfig().getString("levelChance." + aList.size()) != null) {
                             int sc = infernal_mobs.this.getConfig().getInt("levelChance." + aList.size());
-                            int randomNum2 = new Random().nextInt(sc - min + 1) + min;
+                            int randomNum2 = new Random().nextInt(sc - min) + min;
                             if (randomNum2 != 1) {
                                 return;
                             }
@@ -457,7 +456,7 @@ public class infernal_mobs extends JavaPlugin implements Listener {
         g.getEquipment().setChestplateDropChance(0.0F);
         int min = 1;
         int max = 5;
-        int rn = new Random().nextInt(max - min + 1) + min;
+        int rn = new Random().nextInt(max - min) + min;
         if (rn == 1) {
             g.getEquipment().setItemInHand(new ItemStack(Material.STONE_HOE, 1));
             g.getEquipment().setItemInHandDropChance(0.0F);
@@ -1016,8 +1015,9 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                 f = Particle.FLAME.toString();
             } else if (effect.equals("witchMagic")) {
                 f = Particle.SPELL_WITCH.toString();
-            } else
+            } else if (effect != null) {
                 f = effect;
+            }
             if (f != null) {
                 displayParticle(f, l, 1.0, data1, data2);
             } else
@@ -1063,7 +1063,7 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                             Random rand = new Random();
                             int min = 1;
                             int max = 10;
-                            int randomNum = rand.nextInt(max - min + 1) + min;
+                            int randomNum = rand.nextInt(max - min) + min;
                             //System.out.println("PE: " + ability);
                             if (ability.equals("cloaked")) {
                                 ((LivingEntity) mob).addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 40, 1), true);
@@ -1154,11 +1154,7 @@ public class infernal_mobs extends JavaPlugin implements Listener {
             x.printStackTrace();
         }
         serverTime = serverTime + 1;
-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-            public void run() {
-                showEffect();
-            }
-        }, (1 * 20));
+        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, () -> showEffect(),  20);
     }
 
     public boolean isSmall(Entity mob) {
@@ -1227,11 +1223,7 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                         }
             }
         }
-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-            public void run() {
-                applyEffect();
-            }
-        }, (10 * 20));
+        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, this::applyEffect, (10 * 20));
     }
 
     private boolean isArmor(ItemStack s) {
@@ -1373,7 +1365,7 @@ public class infernal_mobs extends JavaPlugin implements Listener {
     private void doMagic(Entity vic, Entity atc, boolean playerIsVictom, String ability, UUID id) {
         int min = 1;
         int max = 10;
-        int randomNum = new Random().nextInt(max - min + 1) + min;
+        int randomNum = new Random().nextInt(max - min) + min;
         if ((atc instanceof Player)) {
             randomNum = 1;
         }
@@ -1528,11 +1520,11 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                         int randomNum2 = rand2.nextInt(max2 - min2 + 1) + min2;
                         if (randomNum2 == 1) {
                             targetLocation.setZ(targetLocation.getZ() + 6.0D);
-                        } else if (randomNum == 2) {
+                        } else if (randomNum2 == 2) {
                             targetLocation.setZ(targetLocation.getZ() - 5.0D);
-                        } else if (randomNum == 3) {
+                        } else if (randomNum2 == 3) {
                             targetLocation.setX(targetLocation.getX() + 8.0D);
-                        } else if (randomNum == 4) {
+                        } else if (randomNum2 == 4) {
                             targetLocation.setX(targetLocation.getX() - 10.0D);
                         }
                         needAir2 = targetLocation;
@@ -1558,12 +1550,12 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                                 feet.getBlock().setType(Material.COBWEB);
                                 setAir(feet, 60);
 
-                                int rNum = new Random().nextInt(max - min + 1) + min;
+                                int rNum = new Random().nextInt(max - min) + min;
                                 if ((rNum == 5) && (
                                         (atc.getType().equals(EntityType.SPIDER)) || (atc.getType().equals(EntityType.CAVE_SPIDER)))) {
                                     Location l = atc.getLocation();
                                     Block b = l.getBlock();
-                                    List<Block> blocks = getSphere(b, 4);
+                                    List<Block> blocks = getSphere(b);
                                     for (Block bl : blocks) {
                                         if (bl.getType().equals(Material.AIR)) {
                                             bl.setType(Material.COBWEB);
@@ -1844,14 +1836,13 @@ public class infernal_mobs extends JavaPlugin implements Listener {
         return getAbilities(power);
     }
 
-    private List<String> allAbilitiesList = Arrays.asList("confusing", "ghost", "morph", "mounted", "flying", "gravity", "firework", "necromancer", "archer", "molten", "mama", "potions", "explode", "berserk", "weakness", "vengeance", "webber", "storm", "sprint", "lifesteal", "ghastly", "ender", "cloaked", "1up", "sapper", "rust", "bullwark", "quicksand", "thief", "tosser", "withering", "blinding", "armoured", "poisonous");
     private List<String> getAbilities(int amount) {
+        List<String> allAbilitiesList = new ArrayList<>(Arrays.asList("confusing", "ghost", "morph", "mounted", "flying", "gravity", "firework", "necromancer", "archer", "molten", "mama", "potions", "explode", "berserk", "weakness", "vengeance", "webber", "storm", "sprint", "lifesteal", "ghastly", "ender", "cloaked", "1up", "sapper", "rust", "bullwark", "quicksand", "thief", "tosser", "withering", "blinding", "armoured", "poisonous"));
         List<String> abilityList = new ArrayList();
         int min = 1;
         for (int i = 0; i < amount; i++) {
             int max = allAbilitiesList.size();
-            int randomNum = new Random().nextInt(max - min + 1) + min - 1;
-
+            int randomNum = new Random().nextInt(max - min) + min;
             String ab = allAbilitiesList.get(randomNum);
             if (getConfig().getString(ab) != null) {
                 if ((getConfig().getString(ab, "always").equals("always")) || (getConfig().getBoolean(ab))) {
@@ -2199,6 +2190,7 @@ public class infernal_mobs extends JavaPlugin implements Listener {
     }
 
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args){
+        List<String> allAbilitiesList = new ArrayList<>(Arrays.asList("confusing", "ghost", "morph", "mounted", "flying", "gravity", "firework", "necromancer", "archer", "molten", "mama", "potions", "explode", "berserk", "weakness", "vengeance", "webber", "storm", "sprint", "lifesteal", "ghastly", "ender", "cloaked", "1up", "sapper", "rust", "bullwark", "quicksand", "thief", "tosser", "withering", "blinding", "armoured", "poisonous"));
         Set<String> commands = new HashSet<>(Arrays.asList("reload", "worldInfo", "error", "getloot", "setloot", "giveloot", "abilities", "showAbilities", "setInfernal", "spawn", "cspawn", "pspawn", "kill", "killall"));
         if (sender.hasPermission("infernal_mobs.commands")) {
 
