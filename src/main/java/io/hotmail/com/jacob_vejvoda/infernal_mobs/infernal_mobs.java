@@ -969,54 +969,76 @@ public class infernal_mobs extends JavaPlugin implements Listener {
         int data2 = Integer.parseInt(split[2]);
         try {
             String f = "FLAME";
-            if (effect.equals("potionBrake")) {
-                f = Particle.SPELL.toString();
-            } else if (effect.equals("smoke")) {
-                f = Particle.SMOKE_NORMAL.toString();
-            } else if (effect.equals("blockBrake")) {
-                f = Particle.BLOCK_CRACK.toString();
-            } else if (effect.equals("hugeExplode")) {
-                f = Particle.EXPLOSION_HUGE.toString();
-            } else if (effect.equals("angryVillager")) {
-                f = Particle.VILLAGER_ANGRY.toString();
-            } else if (effect.equals("cloud")) {
-                f = Particle.CLOUD.toString();
-            } else if (effect.equals("criticalHit")) {
-                f = Particle.CRIT.toString();
-            } else if (effect.equals("mobSpell")) {
-                f = Particle.SPELL_MOB.toString();
-            } else if (effect.equals("enchantmentTable")) {
-                f = Particle.ENCHANTMENT_TABLE.toString();
-            } else if (effect.equals("ender")) {
-                f = Particle.PORTAL.toString();
-            } else if (effect.equals("explode")) {
-                f = Particle.EXPLOSION_NORMAL.toString();
-            } else if (effect.equals("greenSparkle")) {
-                f = Particle.VILLAGER_HAPPY.toString();
-            } else if (effect.equals("heart")) {
-                f = Particle.HEART.toString();
-            } else if (effect.equals("largeExplode")) {
-                f = Particle.EXPLOSION_LARGE.toString();
-            } else if (effect.equals("splash")) {
-                f = Particle.WATER_SPLASH.toString();
-            } else if (effect.equals("largeSmoke")) {
-                f = Particle.SMOKE_LARGE.toString();
-            } else if (effect.equals("lavaSpark")) {
-                f = Particle.LAVA.toString();
-            } else if (effect.equals("magicCriticalHit")) {
-                f = Particle.CRIT_MAGIC.toString();
-            } else if (effect.equals("noteBlock")) {
-                f = Particle.NOTE.toString();
-            } else if (effect.equals("tileDust")) {
-                f = Particle.BLOCK_DUST.toString();
-            } else if (effect.equals("colouredDust")) {
-                f = Particle.REDSTONE.toString();
-            } else if (effect.equals("flame")) {
-                f = Particle.FLAME.toString();
-            } else if (effect.equals("witchMagic")) {
-                f = Particle.SPELL_WITCH.toString();
-            } else if (effect != null) {
-                f = effect;
+            switch (effect) {
+                case "potionBrake":
+                    f = Particle.SPELL.toString();
+                    break;
+                case "smoke":
+                    f = Particle.SMOKE_NORMAL.toString();
+                    break;
+                case "blockBrake":
+                    f = Particle.BLOCK_CRACK.toString();
+                    break;
+                case "hugeExplode":
+                    f = Particle.EXPLOSION_HUGE.toString();
+                    break;
+                case "angryVillager":
+                    f = Particle.VILLAGER_ANGRY.toString();
+                    break;
+                case "cloud":
+                    f = Particle.CLOUD.toString();
+                    break;
+                case "criticalHit":
+                    f = Particle.CRIT.toString();
+                    break;
+                case "mobSpell":
+                    f = Particle.SPELL_MOB.toString();
+                    break;
+                case "enchantmentTable":
+                    f = Particle.ENCHANTMENT_TABLE.toString();
+                    break;
+                case "ender":
+                    f = Particle.PORTAL.toString();
+                    break;
+                case "explode":
+                    f = Particle.EXPLOSION_NORMAL.toString();
+                    break;
+                case "greenSparkle":
+                    f = Particle.VILLAGER_HAPPY.toString();
+                    break;
+                case "heart":
+                    f = Particle.HEART.toString();
+                    break;
+                case "largeExplode":
+                    f = Particle.EXPLOSION_LARGE.toString();
+                    break;
+                case "splash":
+                    f = Particle.WATER_SPLASH.toString();
+                    break;
+                case "largeSmoke":
+                    f = Particle.SMOKE_LARGE.toString();
+                    break;
+                case "lavaSpark":
+                    f = Particle.LAVA.toString();
+                    break;
+                case "magicCriticalHit":
+                    f = Particle.CRIT_MAGIC.toString();
+                    break;
+                case "noteBlock":
+                    f = Particle.NOTE.toString();
+                    break;
+                case "tileDust":
+                    f = Particle.BLOCK_DUST.toString();
+                    break;
+                case "colouredDust":
+                    f = Particle.REDSTONE.toString();
+                    break;
+                case "flame":
+                    f = Particle.FLAME.toString();
+                    break;
+                case "witchMagic":
+                    f = Particle.SPELL_WITCH.toString();
+                    break;
             }
             if (f != null) {
                 displayParticle(f, l, 1.0, data1, data2);
