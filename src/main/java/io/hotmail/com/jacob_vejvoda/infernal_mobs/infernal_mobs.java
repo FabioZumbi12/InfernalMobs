@@ -1880,7 +1880,7 @@ public class infernal_mobs extends JavaPlugin implements Listener {
         return abilityList;
     }
 
-    int idSearch(UUID id) {
+    public int idSearch(UUID id) {
         InfernalMob idMob = null;
         for (InfernalMob mob : this.infernalList) {
             if (mob.id.equals(id)) {
@@ -1893,11 +1893,10 @@ public class infernal_mobs extends JavaPlugin implements Listener {
         return -1;
     }
 
-    List<String> findMobAbilities(UUID id) {
+    public List<String> findMobAbilities(UUID id) {
         for (InfernalMob mob : this.infernalList) {
             if (mob.id.equals(id)) {
-                List<String> abilityList = mob.abilityList;
-                return abilityList;
+                return mob.abilityList;
             }
         }
         return null;
