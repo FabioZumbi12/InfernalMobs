@@ -4,7 +4,7 @@
 
     <groupId>io.hotmail.com.jacob_vejvoda.infernal_mobs</groupId>
     <artifactId>InfernalMobs</artifactId>
-    <version>5.7</version>
+    <version>5.8</version>
     <packaging>jar</packaging>
 
     <name>InfernalMobs</name>
