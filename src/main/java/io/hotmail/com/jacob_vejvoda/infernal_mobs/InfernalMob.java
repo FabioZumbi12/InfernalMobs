@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.UUID;
 
 class InfernalMob {
-    private boolean infernal;
     Entity entity;
     UUID id;
     int lives;
     String effect;
     List<String> abilityList;
+    private boolean infernal;
 
     InfernalMob(Entity type, UUID i, boolean in, List<String> l, int li, String e) {
         this.entity = type;

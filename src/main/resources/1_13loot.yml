@@ -4,155 +4,155 @@ potionEffects:
     level: 2
     particleEffect: colouredDust:0:1
     requiredItems:
-    - 7
+      - 7
   '2':
     potion: FAST_DIGGING
     level: 2
     requiredItems:
-    - 8
+      - 8
   '3':
     potion: SPEED
     level: 3
     requiredItems:
-    - 58
+      - 58
   '4':
     potion: ABSORPTION
     level: 10
     requiredItems:
-    - 71
-    - 72
-    - 73
-    - 74
+      - 71
+      - 72
+      - 73
+      - 74
   '5':
     potion: SLOW_DIGGING
     level: 10
     requiredItems:
-    - 14
+      - 14
   '6':
     potion: FAST_DIGGING
     level: 1
     requiredItems:
-    - 13
+      - 13
   '7':
     potion: WATER_BREATHING
     level: 3
     requiredItems:
-    - 26
-    - 27
-    - 28
-    - 29
+      - 26
+      - 27
+      - 28
+      - 29
   '8':
     potion: WATER_BREATHING
     level: 6
     requiredItems:
-    - 30
-    - 31
-    - 32
-    - 33
+      - 30
+      - 31
+      - 32
+      - 33
   '9':
     potion: INCREASE_DAMAGE
     level: 2
     particleEffect: flame:0:1
     requiredItems:
-    - 61
+      - 61
   '10':
     potion: SATURATION
     level: 5
     requiredItems:
-    - 75
+      - 75
   '11':
     potion: WITHER
     level: 1
     attackEffect: target
     requiredItems:
-    - 40
+      - 40
   '12':
     potion: POISON
     level: 2
     attackEffect: target
     requiredItems:
-    - 76
+      - 76
   '13':
     potion: HEAL
     level: 1
     attackEffect: self
     requiredItems:
-    - 77
+      - 77
   '14':
     potion: JUMP
     level: 3
     requiredItems:
-    - 78
+      - 78
   '15':
     potion: WITHER
     level: 1
     attackHelpEffect: target
     requiredItems:
-    - 79
+      - 79
   '16':
     potion: INVISIBILITY
     level: 1
     requiredItems:
-    - 80
+      - 80
   '17':
     potion: WEAKNESS
     level: 1
     attackHelpEffect: target
     requiredItems:
-    - 81
+      - 81
   '18':
     potion: WATER_BREATHING
     level: 1
     requiredItems:
-    - 82
+      - 82
   '19':
     potion: HEALTH_BOOST
     level: 1
     particleEffect: heart:1:1
     requiredItems:
-    - 83
+      - 83
   '20':
     potion: LEVITATION
     level: 1
     particleEffect: cloud:0:1
     requiredItems:
-    - 87
+      - 87
   '21':
     potion: LUCK
     level: 1
     requiredItems:
-    - 88
+      - 88
   '22':
     potion: LEVITATION
     level: 1
     attackEffect: target
     requiredItems:
-    - 89
+      - 89
   '23':
     potion: INCREASE_DAMAGE
     level: 2
     requiredItems:
-    - 90
+      - 90
   '24':
     potion: SPEED
     level: 4
     requiredItems:
-    - 92
+      - 92
   '25':
     potion: SLOW_DIGGING
     level: 5
     requiredItems:
-    - 93
+      - 93
   '26':
     potion: FAST_DIGGING
     level: 3
     requiredItems:
-    - 94
+      - 94
   '27':
     potion: FIRE_RESISTANCE
     level: 1
     requiredItems:
-    - 95
+      - 95
 loot:
   '1':
     item: IRON_AXE
@@ -1169,10 +1169,10 @@ loot:
     item: DIAMOND_SWORD
     amount: 1
     name:
-    - '&c&lNether Sword'
-    - '&c&lWither Sword'
-    - '&c&lGhast Sword'
-    - '&c&lMagma Sword'
+      - '&c&lNether Sword'
+      - '&c&lWither Sword'
+      - '&c&lGhast Sword'
+      - '&c&lMagma Sword'
     enchantments:
       '1':
         enchantment: DAMAGE_ALL
@@ -1239,12 +1239,12 @@ loot:
     name: '&7&lShield of Power'
     colour: YELLOW
     patterns:
-    - ==: Pattern
-      color: LIGHT_BLUE
-      pattern: dls
-    - ==: Pattern
-      color: BLUE
-      pattern: sku
+      - ==: Pattern
+        color: LIGHT_BLUE
+        pattern: dls
+      - ==: Pattern
+        color: BLUE
+        pattern: sku
   '91':
     item: DIAMOND_SWORD
     amount: 1

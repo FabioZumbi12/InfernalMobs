@@ -60,88 +60,88 @@ effectAllPlayerAttacks: true
 enableParticles: true
 enableDeathMessages: false
 deathMessages:
-- '&cplayer &chas killed an mob&c!'
-- '&cAn mob &cwas slain by player&c!'
-- '&cplayer &cowned an mob&c!'
-- '&cAn mob &cwas beheaded by player&c''s weapon!'
-- '&cplayer&c''s weapon &ckilled an mob&c!'
-- '&cAn mob &cwas killed by player &cusing a weapon&c!'
+  - '&cplayer &chas killed an mob&c!'
+  - '&cAn mob &cwas slain by player&c!'
+  - '&cplayer &cowned an mob&c!'
+  - '&cAn mob &cwas beheaded by player&c''s weapon!'
+  - '&cplayer&c''s weapon &ckilled an mob&c!'
+  - '&cAn mob &cwas killed by player &cusing a weapon&c!'
 enableSpawnMessages: false
 spawnMessageRadius: 64
 spawnMessages:
-- '&cAn Infernal mob has spawned near you!'
-- '&cWatch out!'
-- '&cYou hear a faint scream...'
-- '&cSomething is coming...'
-- '&cYou hear a mob nearby...'
+  - '&cAn Infernal mob has spawned near you!'
+  - '&cWatch out!'
+  - '&cYou hear a faint scream...'
+  - '&cSomething is coming...'
+  - '&cYou hear a mob nearby...'
 mobworlds:
-- <all>
+  - <all>
 effectworlds:
-- <all>
+  - <all>
 enabledmobs:
-- ELDER_GUARDIAN
-- WITHER_SKELETON
-- STRAY
-- HUSK
-- ZOMBIE_VILLAGER
-- SKELETON_HORSE
-- ZOMBIE_HORSE
-#- DONKEY
-#- MULE
-- EVOKER
-- VEX
-- VINDICATOR
-- CREEPER
-- SKELETON
-- SPIDER
-- GIANT
-- ZOMBIE
-- SLIME
-- GHAST
-- PIG_ZOMBIE
-- ENDERMAN
-- CAVE_SPIDER
-- SILVERFISH
-- BLAZE
-- MAGMA_CUBE
-- ENDER_DRAGON
-- WITHER
-- BAT
-- WITCH
-- ENDERMITE
-- GUARDIAN
-- SHULKER
-- ILLUSIONER
-- PARROT
-#- PIG
-#- SHEEP
-#- COW
-#- CHICKEN
-#- SQUID
-#- WOLF
-#- MUSHROOM_COW
-#- SNOWMAN
-#- OCELOT
-#- IRON_GOLEM
-#- HORSE
-#- RABBIT
-- POLAR_BEAR
-- LLAMA
-#- VILLAGER
-- DROWNED
-- PHANTOM
-- PUFFERFISH
+  - ELDER_GUARDIAN
+  - WITHER_SKELETON
+  - STRAY
+  - HUSK
+  - ZOMBIE_VILLAGER
+  - SKELETON_HORSE
+  - ZOMBIE_HORSE
+  #- DONKEY
+  #- MULE
+  - EVOKER
+  - VEX
+  - VINDICATOR
+  - CREEPER
+  - SKELETON
+  - SPIDER
+  - GIANT
+  - ZOMBIE
+  - SLIME
+  - GHAST
+  - PIG_ZOMBIE
+  - ENDERMAN
+  - CAVE_SPIDER
+  - SILVERFISH
+  - BLAZE
+  - MAGMA_CUBE
+  - ENDER_DRAGON
+  - WITHER
+  - BAT
+  - WITCH
+  - ENDERMITE
+  - GUARDIAN
+  - SHULKER
+  - ILLUSIONER
+  - PARROT
+  #- PIG
+  #- SHEEP
+  #- COW
+  #- CHICKEN
+  #- SQUID
+  #- WOLF
+  #- MUSHROOM_COW
+  #- SNOWMAN
+  #- OCELOT
+  #- IRON_GOLEM
+  #- HORSE
+  #- RABBIT
+  - POLAR_BEAR
+  - LLAMA
+  #- VILLAGER
+  - DROWNED
+  - PHANTOM
+  - PUFFERFISH
 enabledCharmSlots:
-- 0
-- 1
-- 2
-- 3
-- 4
-- 5
-- 6
-- 7
-- 8
-- 36
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 36
 poisonous: true
 armoured: true
 blinding: true
@@ -188,80 +188,80 @@ fireworkColour:
   green: 10
   blue: 10
 enabledSpawnReasons:
-- BREEDING
-#- BUILD_IRONGOLEM
-#- BUILD_SNOWMAN
-- BUILD_WITHER
-- CHUNK_GEN
-#- CURED
-- CUSTOM
-- DEFAULT
-#- DISPENSE_EGG
-#- EGG
-- INFECTION
-- SPAWNER_EGG
-#- JOCKEY
-- LIGHTNING
-#- MOUNT
-- NATURAL
-- NETHER_PORTAL
-- OCELOT_BABY
-- REINFORCEMENTS
-- SILVERFISH_BLOCK
-- SLIME_SPLIT
-#- SPAWNER
-#- SPAWNER_EGG
-#- TRAP
-#- VILLAGE_DEFENSE
-- VILLAGE_INVASION
+  - BREEDING
+  #- BUILD_IRONGOLEM
+  #- BUILD_SNOWMAN
+  - BUILD_WITHER
+  - CHUNK_GEN
+  #- CURED
+  - CUSTOM
+  - DEFAULT
+  #- DISPENSE_EGG
+  #- EGG
+  - INFECTION
+  - SPAWNER_EGG
+  #- JOCKEY
+  - LIGHTNING
+  #- MOUNT
+  - NATURAL
+  - NETHER_PORTAL
+  - OCELOT_BABY
+  - REINFORCEMENTS
+  - SILVERFISH_BLOCK
+  - SLIME_SPLIT
+  #- SPAWNER
+  #- SPAWNER_EGG
+  #- TRAP
+  #- VILLAGE_DEFENSE
+  - VILLAGE_INVASION
 mobParticles:
-- lavaSpark:1:10
+  - lavaSpark:1:10
 mountFate: nothing
 enabledMounts:
-- SPIDER
-- SKELETON_HORSE
-- ZOMBIE_HORSE
-- DONKEY
-- MULE
-- SLIME
-- GHAST
-- MAGMA_CUBE
-- ENDER_DRAGON
-- BAT
-- PIG
-- SHEEP
-- COW
-- CHICKEN
-- MUSHROOM_COW
-- HORSE
-- POLAR_BEAR
-- LLAMA
-- PHANTOM
+  - SPIDER
+  - SKELETON_HORSE
+  - ZOMBIE_HORSE
+  - DONKEY
+  - MULE
+  - SLIME
+  - GHAST
+  - MAGMA_CUBE
+  - ENDER_DRAGON
+  - BAT
+  - PIG
+  - SHEEP
+  - COW
+  - CHICKEN
+  - MUSHROOM_COW
+  - HORSE
+  - POLAR_BEAR
+  - LLAMA
+  - PHANTOM
 enabledRiders:
-- WITHER_SKELETON
-- STRAY
-- HUSK
-- ZOMBIE_VILLAGER
-- EVOKER
-- VINDICATOR
-- SKELETON
-- ZOMBIE
-- PIG_ZOMBIE
-- ENDERMAN
-- WITCH
-- SNOWMAN
-- VILLAGER
-- ILLUSIONER
-- DROWNED
+  - WITHER_SKELETON
+  - STRAY
+  - HUSK
+  - ZOMBIE_VILLAGER
+  - EVOKER
+  - VINDICATOR
+  - SKELETON
+  - ZOMBIE
+  - PIG_ZOMBIE
+  - ENDERMAN
+  - WITCH
+  - SNOWMAN
+  - VILLAGER
+  - ILLUSIONER
+  - DROWNED
 disabledBabyMobs:
-- WOLF
-- MUSHROOM_COW
-- COW
-- SHEEP
-- PIG
-- CHICKEN
-- OCELOT
-- HORSE
+  - WOLF
+  - MUSHROOM_COW
+  - COW
+  - SHEEP
+  - PIG
+  - CHICKEN
+  - OCELOT
+  - HORSE
 #The min/max amount of powers that a mob will get.
 #NOTE: the amount of enabled powers must not be less than the maxpowers.
 #healthMultiplier is what number the infernal mobs health will be multiplied by.
