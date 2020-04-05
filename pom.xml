@@ -4,7 +4,7 @@
 
     <groupId>io.hotmail.com.jacob_vejvoda.infernal_mobs</groupId>
     <artifactId>InfernalMobs</artifactId>
-    <version>5.8</version>
+    <version>6.0</version>
     <packaging>jar</packaging>
 
     <name>InfernalMobs</name>
@@ -21,13 +21,13 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.14.2-R0.1-SNAPSHOT</version>
+            <version>1.15.2-R0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.14.2-R0.1-SNAPSHOT</version>
+            <version>1.15.2-R0.1-SNAPSHOT</version>
             <classifier>javadoc</classifier>
         </dependency>
 
@@ -46,6 +46,7 @@
     </properties>
 
     <build>
+        <finalName>${project.artifactId}_${project.version}</finalName>
         <resources>
             <resource>
                 <targetPath>.</targetPath>

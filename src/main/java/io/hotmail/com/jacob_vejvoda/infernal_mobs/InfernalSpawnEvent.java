@@ -11,20 +11,16 @@ public class InfernalSpawnEvent extends Event implements Cancellable {
     private InfernalMob infernal;
     private boolean cancelled;
 
-    public InfernalSpawnEvent(Entity ent, InfernalMob infernal) {
+    public InfernalSpawnEvent(Entity ent, InfernalMob infernal){
         this.ent = ent;
         this.infernal = infernal;
     }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
-    public Entity getEntity() {
+    public Entity getEntity(){
         return this.ent;
     }
 
-    public InfernalMob getInfernal() {
+    public InfernalMob getInfernal(){
         return this.infernal;
     }
 
@@ -40,6 +36,10 @@ public class InfernalSpawnEvent extends Event implements Cancellable {
 
     @Override
     public HandlerList getHandlers() {
+        return handlers;
+    }
+
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

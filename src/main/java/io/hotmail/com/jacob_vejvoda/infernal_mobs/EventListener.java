@@ -14,15 +14,20 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class EventListener implements Listener {
@@ -31,6 +36,89 @@ public class EventListener implements Listener {
 
     EventListener(infernal_mobs instance) {
         plugin = instance;
+    }
+    
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerInteract(PlayerInteractEvent e) {
+    	Player p = e.getPlayer();
+    	try {
+    		ItemStack s = plugin.getDiviningStaff();
+    		if(p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(s.getItemMeta().getDisplayName())) {
+    	        Entity b = GUI.getNearbyBoss(p);
+    	        //System.out.println("GB");
+    	        //Make Look At
+    	        if(b != null) {
+    	        	//Take Powder
+    	        	boolean took = false;
+    	        	for(ItemStack i : p.getInventory())
+    	        		if(i != null && i.getType().equals(Material.BLAZE_POWDER)) {
+    	        			if(i.getAmount() == 1) {
+    	        				p.getInventory().remove(i);
+    	        			}else
+    	        				i.setAmount(i.getAmount()-1);
+    	        			took = true;
+    	        			break;
+    	        		}
+    	        	if(!took) {
+    	        		p.sendMessage("§cYou need blaze powder to use this!");
+    	        		return;
+    	        	}
+    	        	//Change Looking
+	    			Entity source = b;
+	    			Entity target = p;
+	    	     
+	    	        Vector direction = getVector(target).subtract(getVector(source)).normalize();
+	    	        double x = direction.getX();
+	    	        double y = direction.getY();
+	    	        double z = direction.getZ();
+	    	     
+	    	        // Now change the angle
+	    	        Location changed = target.getLocation().clone();
+	    	        changed.setYaw(180 - toDegree(Math.atan2(x, z)));
+	    	        changed.setPitch(90 - toDegree(Math.acos(y)));
+	    	        target.teleport(changed);
+	    	        //Beam
+	    	        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
+	    	        	public void run(){
+	    	    			//Shoot Beam
+	    	    			Location eyeLoc = p.getEyeLocation();
+	    	    			double px = eyeLoc.getX();
+	    	    			double py = eyeLoc.getY();
+	    	    			double pz = eyeLoc.getZ();
+	    	    			double yaw  = Math.toRadians(eyeLoc.getYaw() + 90);
+	    	    			double pitch = Math.toRadians(eyeLoc.getPitch() + 90);
+	    	    			double x = Math.sin(pitch) * Math.cos(yaw);
+	    	    			double y = Math.sin(pitch) * Math.sin(yaw);
+	    	    			double z = Math.cos(pitch);
+	    	    			for (int j = 1 ; j <= 10 ; j++) {
+	    		    			for (int i = 1 ; i <= 10 ; i++) {
+	    							Location loc = new Location(p.getWorld(), px + (i * x), py + (i * z), pz + (i * y));
+	    							beamParticals(loc);
+	    		    			}
+	    	    			}
+	    	        	}
+	    	        }, 5);
+    	        }
+    		}
+    	}catch(Exception x) {}
+    }
+    
+    private void beamParticals(Location loc){
+    	int speed = -1;
+    	int amount = 1;
+        double r = 0;
+        plugin.displayParticle(Particle.DRIP_LAVA.toString(), loc.getWorld(), loc.getX(), loc.getY(), loc.getZ(), r, speed, amount);
+    }
+     
+    private float toDegree(double angle) {
+        return (float) Math.toDegrees(angle);
+    }
+     
+    private Vector getVector(Entity entity) {
+        if (entity instanceof Player)
+            return ((Player) entity).getEyeLocation().toVector();
+        else
+            return entity.getLocation().toVector();
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -192,9 +280,12 @@ public class EventListener implements Listener {
                                 event.setCancelled(true);
                             }
                         }
-                    }
+                    }/*else if (!plugin.getConfig().getBoolean("enableFarmingDrops")) {
+						return;
+					}*/
                 }
             }
+            //System.out.println("InfernalMob Spawn 2");
             if ((event.getEntity().hasMetadata("NPC")) || (event.getEntity().hasMetadata("shopkeeper"))) {
                 return;
             }
@@ -230,9 +321,9 @@ public class EventListener implements Listener {
             UUID id = event.getEntity().getUniqueId();
             int mobIndex = plugin.idSearch(id);
             if (mobIndex != -1) {
-                List<String> aList;
+                ArrayList<String> aList;
                 if (plugin.findMobAbilities(id) != null) {
-                    aList = plugin.findMobAbilities(id);
+                    aList = (ArrayList<String>) plugin.findMobAbilities(id);
                 } else {
                     return;
                 }
@@ -246,19 +337,20 @@ public class EventListener implements Listener {
                     if (event.getEntity().getEquipment().getHelmet().getItemMeta().getDisplayName().equals("§fGhost Head")) {
                         isGhost = true;
                     }
-                } catch (Exception ignored) {
+                } catch (Exception localException1) {
                 }
                 if (aList.contains("ghost")) {
                     plugin.spawnGhost(event.getEntity().getLocation());
                 }
                 Location dropSpot;
                 if (aList.contains("molten")) {
-                    dropSpot = event.getEntity().getLocation();
+                    Location lavaSpot = event.getEntity().getLocation();
+                    dropSpot = lavaSpot;
                     dropSpot.setX(dropSpot.getX() - 2.0D);
                 } else {
                     dropSpot = event.getEntity().getLocation();
                 }
-                if ((plugin.getConfig().getBoolean("enableDeathMessages")) && ((event.getEntity().getKiller() != null)) && (!isGhost)) {
+                if ((plugin.getConfig().getBoolean("enableDeathMessages")) && ((event.getEntity().getKiller() instanceof Player)) && (!isGhost)) {
                     Player player = event.getEntity().getKiller();
                     if (plugin.getConfig().getList("deathMessages") != null) {
                         ArrayList<String> deathMessagesList = (ArrayList) plugin.getConfig().getList("deathMessages");
@@ -268,8 +360,12 @@ public class EventListener implements Listener {
                         String tittle = plugin.gui.getMobNameTag(event.getEntity());
                         deathMessage = ChatColor.translateAlternateColorCodes('&', deathMessage);
                         deathMessage = deathMessage.replace("player", player.getName());
-                        if (!player.getItemInHand().getType().equals(Material.AIR) && player.getItemInHand().hasItemMeta() && player.getItemInHand().getItemMeta().hasDisplayName()) {
-                            deathMessage = deathMessage.replace("weapon", player.getItemInHand().getItemMeta().getDisplayName());
+                        if ((player.getItemInHand() != null) && (!player.getItemInHand().getType().equals(Material.AIR))) {
+                            if (player.getItemInHand().getItemMeta().getDisplayName() != null) {
+                                deathMessage = deathMessage.replace("weapon", player.getItemInHand().getItemMeta().getDisplayName());
+                            } else {
+                                deathMessage = deathMessage.replace("weapon", player.getItemInHand().getType().name().replace("_", " ").toLowerCase());
+                            }
                         } else {
                             deathMessage = deathMessage.replace("weapon", "fist");
                         }
@@ -283,13 +379,14 @@ public class EventListener implements Listener {
                         System.out.println("No valid death messages found!");
                     }
                 }
-                if (plugin.getConfig().getBoolean("enableDrops") &&
-                        ((plugin.getConfig().getBoolean("enableFarmingDrops") || (event.getEntity().getKiller() != null)))) {
+                if ((plugin.getConfig().getBoolean("enableDrops")) &&
+                        ((plugin.getConfig().getBoolean("enableFarmingDrops")) || (event.getEntity().getKiller() != null)) &&
+                        ((plugin.getConfig().getBoolean("enableFarmingDrops")) || ((event.getEntity().getKiller() instanceof Player)))) {
                     Player player = null;
-                    if ((event.getEntity().getKiller() != null)) {
+                    if ((event.getEntity().getKiller() instanceof Player)) {
                         player = event.getEntity().getKiller();
                     }
-                    if (player != null && !player.getGameMode().equals(GameMode.SURVIVAL) && plugin.getConfig().getBoolean("noCreativeDrops")) {
+                    if ((player != null) && (player.getGameMode().equals(GameMode.CREATIVE)) && (plugin.getConfig().getBoolean("noCreativeDrops"))) {
                         return;
                     }
                     ItemStack drop = plugin.getRandomLoot(player, event.getEntity().getType().getName(), aList.size());
@@ -297,7 +394,7 @@ public class EventListener implements Listener {
                         int min = 1;
                         int max = plugin.getConfig().getInt("dropChance");
                         int randomNum = new Random().nextInt(max - min + 1) + min;
-                        if (randomNum == 1) {
+                        if ((dropSpot != null) && (randomNum == 1)) {
                             Item dropedItem = event.getEntity().getWorld().dropItemNaturally(dropSpot, drop);
                             plugin.keepAlive(dropedItem);
                         }
@@ -312,6 +409,7 @@ public class EventListener implements Listener {
                     System.out.println("Error: " + e);
                 }
             }
+            return;
         } catch (Exception e) {
             System.out.println("EntityDeathEvent: " + e);
         }
