@@ -1652,8 +1652,8 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                                 }
                                 if (atc instanceof Ageable) {
                                     for (int i = 0; i < amount; i++) {
-                                        Ageable age = (Ageable) atc;
-                                        age.setBaby();
+                                        Ageable ageable = (Ageable) atc.getWorld().spawnEntity(atc.getLocation(), atc.getType());
+                                        ageable.setBaby();
                                     }
                                 } else {
                                     for (int i = 0; i < amount; i++) {
