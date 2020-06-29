@@ -37,30 +37,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Ageable;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Chicken;
-import org.bukkit.entity.Cow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Fireball;
-import org.bukkit.entity.Firework;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.MushroomCow;
-import org.bukkit.entity.Ocelot;
-import org.bukkit.entity.Pig;
-import org.bukkit.entity.PigZombie;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Sheep;
-import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.ThrownPotion;
-import org.bukkit.entity.Villager;
-import org.bukkit.entity.WitherSkull;
-import org.bukkit.entity.Wolf;
-import org.bukkit.entity.Zombie;
+import org.bukkit.entity.*;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemFlag;
@@ -127,33 +104,46 @@ public class infernal_mobs extends JavaPlugin implements Listener {
             }
         }
         //Register Config
+
+        String configVersion = null;
+        if (Bukkit.getVersion().contains("1.13") ||
+                Bukkit.getVersion().contains("1.14") ||
+                Bukkit.getVersion().contains("1.15")) {
+            configVersion = "1_15";
+        }
+        if (Bukkit.getVersion().contains("1.16")) {
+            configVersion = "1_16";
+        }
+
         if (!new File(this.getDataFolder(), "config.yml").exists()) {
             //saveDefaultConfig();
             this.getLogger().log(Level.INFO, "No config.yml found, generating...");
             //Generate Config
             boolean generatedConfig = false;
             //for(String version : Arrays.asList("1.12","1.11","1.10","1.9","1.8"))
-            if (Bukkit.getVersion().contains("1.13") || Bukkit.getVersion().contains("1.14") || Bukkit.getVersion().contains("1.15")) {
-                this.saveResource("1_15_config.yml", false);
-                new File(this.getDataFolder(), "1_15_config.yml").renameTo(new File(this.getDataFolder(), "config.yml"));
+
+            if (configVersion != null) {
+                this.saveResource(configVersion + "_config.yml", false);
+                new File(this.getDataFolder(), configVersion + "_config.yml").renameTo(new File(this.getDataFolder(), "config.yml"));
                 getConfig().set("configVersion", Bukkit.getVersion());
                 getConfig().options().header(
                         "Chance is the chance that a mob will not be infernal, the lower the number the higher the chance. (min 1)\n" +
-                        "Enabledworlds are the worlds that infernal mobs can spawn in.\n" +
-                        "Enabledmobs are the mobs that can become infernal.\n" +
-                        "Loot is the items that are dropped when an infernal mob dies. (You can have up to 64)\n" +
-                        "Item is the item, Amount is the amount, Durability is how damaged it will be (0 is undamaged).\n" +
-                        "nameTagsLevel is the visibility level of the name tags, 0 = no tag, \n" +
-                        "1 = tag shown when your looking at the mob, 2 = tag always shown.\n" +
-                        "Note, if you have name tags set to 0, on server restart all infernal mobs will turn normal.\n" +
-                        "If you want to enable the boss bar you must have BarAPI on your server.\n" +
-                        "nameTagsName and bossBarsName have these special tags: <mobLevel> = the amount of powers the boss has.\n" +
-                        "<abilities> = A list of about 3-5 (whatever can fit) names of abilities the boss has.\n" +
-                        "<mobName> = Name of the mob, so if the mob is a creeper the mobName will be \"Creeper\".");
+                                "Enabledworlds are the worlds that infernal mobs can spawn in.\n" +
+                                "Enabledmobs are the mobs that can become infernal.\n" +
+                                "Loot is the items that are dropped when an infernal mob dies. (You can have up to 64)\n" +
+                                "Item is the item, Amount is the amount, Durability is how damaged it will be (0 is undamaged).\n" +
+                                "nameTagsLevel is the visibility level of the name tags, 0 = no tag, \n" +
+                                "1 = tag shown when your looking at the mob, 2 = tag always shown.\n" +
+                                "Note, if you have name tags set to 0, on server restart all infernal mobs will turn normal.\n" +
+                                "If you want to enable the boss bar you must have BarAPI on your server.\n" +
+                                "nameTagsName and bossBarsName have these special tags: <mobLevel> = the amount of powers the boss has.\n" +
+                                "<abilities> = A list of about 3-5 (whatever can fit) names of abilities the boss has.\n" +
+                                "<mobName> = Name of the mob, so if the mob is a creeper the mobName will be \"Creeper\".");
                 saveConfig();
                 this.getLogger().log(Level.INFO, "Config successfully generated!");
                 generatedConfig = true;
             }
+
             if (!generatedConfig) {
                 this.getLogger().log(Level.SEVERE, "No config available, " + Bukkit.getVersion() + " is not supported!");
                 Bukkit.getPluginManager().disablePlugin(this);
@@ -164,11 +154,16 @@ public class infernal_mobs extends JavaPlugin implements Listener {
         if (!lootYML.exists()) {
             this.getLogger().log(Level.INFO, "No loot.yml found, generating...");
             //Generate Config
-            if (Bukkit.getVersion().contains("1.13") || Bukkit.getVersion().contains("1.14") || Bukkit.getVersion().contains("1.15")) {
-                this.saveResource("1_15loot.yml", false);
-                new File(this.getDataFolder(), "1_15loot.yml").renameTo(new File(this.getDataFolder(), "loot.yml"));
+            boolean generatedConfig = false;
+
+            if (configVersion != null) {
+                this.saveResource(configVersion + "loot.yml", false);
+                new File(this.getDataFolder(), configVersion + "loot.yml").renameTo(new File(this.getDataFolder(), "loot.yml"));
                 this.getLogger().log(Level.INFO, Bukkit.getVersion() + " Loot successfully generated!");
-            } else {
+                generatedConfig = true;
+            }
+
+            if (!generatedConfig) {
                 this.getLogger().log(Level.SEVERE, "No loot available, " + Bukkit.getVersion() + " is not supported!");
                 Bukkit.getPluginManager().disablePlugin(this);
             }
@@ -233,7 +228,8 @@ public class infernal_mobs extends JavaPlugin implements Listener {
 
     void giveMobsPowers(World world) {
         for (Entity ent : world.getEntities()) {
-            if (((ent instanceof LivingEntity)) && (this.mobSaveFile.getString(ent.getUniqueId().toString()) != null)) {
+            if (LivingEntity.class.isAssignableFrom(ent.getClass()) &&
+                    (this.mobSaveFile.getString(ent.getUniqueId().toString()) != null)) {
                 giveMobPowers(ent);
             }
         }
@@ -939,12 +935,8 @@ public class infernal_mobs extends JavaPlugin implements Listener {
     }
 
     private boolean isBaby(Entity mob) {
-        if (mob.getType().equals(EntityType.ZOMBIE)) {
-            Zombie zombie = (Zombie) mob;
-            return zombie.isBaby();
-        } else if (mob.getType().equals(EntityType.PIG_ZOMBIE)) {
-            PigZombie pigzombie = (PigZombie) mob;
-            return pigzombie.isBaby();
+        if (mob instanceof Ageable) {
+            return !((Ageable)mob).isAdult();
         }
         return false;
     }
@@ -1465,15 +1457,10 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                     String mobName = mList.get(index);
 
                     newEnt = null;
-                    EntityType[] arrayOfEntityType;
-                    int j = (arrayOfEntityType = EntityType.values()).length;
-                    for (int i = 0; i < j; i++) {
-                        EntityType e = arrayOfEntityType[i];
-                        try {
-                            if ((e.getName() != null) && (e.getName().equalsIgnoreCase(mobName))) {
-                                newEnt = vic.getWorld().spawnEntity(l, e);
-                            }
-                        } catch (Exception ignored) {
+                    for (EntityType type : getEntityList()) {
+                        if (type.name().equalsIgnoreCase(mobName)) {
+                            newEnt = vic.getWorld().spawnEntity(l, type);
+                            break;
                         }
                     }
                     if (newEnt == null) {
@@ -1663,60 +1650,10 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                                 } else {
                                     amount = 3;
                                 }
-                                if (atc.getType().equals(EntityType.MUSHROOM_COW)) {
+                                if (atc instanceof Ageable) {
                                     for (int i = 0; i < amount; i++) {
-                                        MushroomCow minion = (MushroomCow) atc.getWorld().spawnEntity(atc.getLocation(), EntityType.MUSHROOM_COW);
-                                        minion.setBaby();
-                                    }
-                                } else if (atc.getType().equals(EntityType.COW)) {
-                                    for (int i = 0; i < amount; i++) {
-                                        Cow minion = (Cow) atc.getWorld().spawnEntity(atc.getLocation(), EntityType.COW);
-                                        minion.setBaby();
-                                    }
-                                } else if (atc.getType().equals(EntityType.SHEEP)) {
-                                    for (int i = 0; i < amount; i++) {
-                                        Sheep minion = (Sheep) atc.getWorld().spawnEntity(atc.getLocation(), EntityType.SHEEP);
-                                        minion.setBaby();
-                                    }
-                                } else if (atc.getType().equals(EntityType.PIG)) {
-                                    for (int i = 0; i < amount; i++) {
-                                        Pig minion = (Pig) atc.getWorld().spawnEntity(atc.getLocation(), EntityType.PIG);
-                                        minion.setBaby();
-                                    }
-                                } else if (atc.getType().equals(EntityType.CHICKEN)) {
-                                    for (int i = 0; i < amount; i++) {
-                                        Chicken minion = (Chicken) atc.getWorld().spawnEntity(atc.getLocation(), EntityType.CHICKEN);
-                                        minion.setBaby();
-                                    }
-                                } else if (atc.getType().equals(EntityType.WOLF)) {
-                                    for (int i = 0; i < amount; i++) {
-                                        Wolf minion = (Wolf) atc.getWorld().spawnEntity(atc.getLocation(), EntityType.WOLF);
-                                        minion.setBaby();
-                                    }
-                                } else if (atc.getType().equals(EntityType.ZOMBIE)) {
-                                    for (int i = 0; i < amount; i++) {
-                                        Zombie minion = (Zombie) atc.getWorld().spawnEntity(atc.getLocation(), EntityType.ZOMBIE);
-                                        minion.setBaby(true);
-                                    }
-                                } else if (atc.getType().equals(EntityType.PIG_ZOMBIE)) {
-                                    for (int i = 0; i < amount; i++) {
-                                        PigZombie minion = (PigZombie) atc.getWorld().spawnEntity(atc.getLocation(), EntityType.PIG_ZOMBIE);
-                                        minion.setBaby(true);
-                                    }
-                                } else if (atc.getType().equals(EntityType.OCELOT)) {
-                                    for (int i = 0; i < amount; i++) {
-                                        Ocelot minion = (Ocelot) atc.getWorld().spawnEntity(atc.getLocation(), EntityType.OCELOT);
-                                        minion.setBaby();
-                                    }
-                                } else if (atc.getType().equals(EntityType.HORSE)) {
-                                    for (int i = 0; i < amount; i++) {
-                                        Horse minion = (Horse) atc.getWorld().spawnEntity(atc.getLocation(), EntityType.HORSE);
-                                        minion.setBaby();
-                                    }
-                                } else if (atc.getType().equals(EntityType.VILLAGER)) {
-                                    for (int i = 0; i < amount; i++) {
-                                        Villager minion = (Villager) atc.getWorld().spawnEntity(atc.getLocation(), EntityType.VILLAGER);
-                                        minion.setBaby();
+                                        Ageable age = (Ageable) atc;
+                                        age.setBaby();
                                     }
                                 } else {
                                     for (int i = 0; i < amount; i++) {
@@ -2296,9 +2233,9 @@ public class infernal_mobs extends JavaPlugin implements Listener {
             if (args.length == 2){
                 if (args[0].equalsIgnoreCase("spawn") || args[0].equalsIgnoreCase("cspawn") || args[0].equalsIgnoreCase("pspawn")){
                     if (args[1].isEmpty())
-                        newTab.addAll(Arrays.stream(EntityType.values()).filter(m->m.isSpawnable() && m.isAlive()).map(EntityType::name).collect(Collectors.toList()));
+                        newTab.addAll(getEntityList().stream().map(EntityType::name).collect(Collectors.toList()));
                     else
-                        Arrays.stream(EntityType.values()).filter(m->m.isSpawnable() && m.isAlive()).map(EntityType::name).collect(Collectors.toList()).forEach(tab->{
+                        getEntityList().stream().map(EntityType::name).collect(Collectors.toList()).forEach(tab->{
                             if (tab.toLowerCase().startsWith(args[1].toLowerCase()))
                                 newTab.add(tab);
                         });
@@ -2374,7 +2311,13 @@ public class infernal_mobs extends JavaPlugin implements Listener {
         }
         return null;
     }
-    
+
+    public List<EntityType> getEntityList(){
+        return Arrays.stream(EntityType.values()).filter(m->m.isSpawnable() &&
+                !ArmorStand.class.isAssignableFrom(m.getEntityClass()) &&
+                LivingEntity.class.isAssignableFrom(m.getEntityClass())).collect(Collectors.toList());
+    }
+
     public ItemStack getDiviningStaff(){
     	ItemStack s = getItem(Material.BLAZE_ROD, "§6§lDivining Rod", 1, Arrays.asList("Click to find infernal mobs."));
     	ItemMeta m = s.getItemMeta();
@@ -2448,7 +2391,7 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                         sender.sendMessage("§eConfig reloaded!");
                     } else if (args[0].equals("mobList")) {
                         sender.sendMessage("§6Mob List:");
-                        for (EntityType et : EntityType.values())
+                        for (EntityType et : getEntityList())
                             if (et != null && et.getName() != null)
                                 sender.sendMessage("§e" + et.getName());
                         return true;
@@ -2671,6 +2614,8 @@ public class infernal_mobs extends JavaPlugin implements Listener {
 
                             if (w != null) {
                                 for (Entity e : w.getEntities()) {
+                                    if (!LivingEntity.class.isAssignableFrom(e.getClass())) continue;
+
                                     int id = idSearch(e.getUniqueId());
                                     if (id != -1) {
                                         removeMob(id);
@@ -2684,7 +2629,7 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                             }
                         } else if (args[0].equalsIgnoreCase("mobs")) {
                             sender.sendMessage("§6List of Mobs:");
-                            for (EntityType e : EntityType.values())
+                            for (EntityType e : getEntityList())
                                 if (e != null)
                                     sender.sendMessage(e.toString());
                         } else if (args[0].equalsIgnoreCase("setloot")) {
