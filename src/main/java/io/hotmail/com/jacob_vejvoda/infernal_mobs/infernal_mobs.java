@@ -69,14 +69,15 @@ public class infernal_mobs extends JavaPlugin implements Listener {
     long serverTime = 0L;
     private int loops;
     ArrayList<InfernalMob> infernalList = new ArrayList();
-    private ArrayList<UUID> dropedLootList = new ArrayList();
+    private final ArrayList<UUID> dropedLootList = new ArrayList();
     private File lootYML = new File(getDataFolder(), "loot.yml");
     File saveYML = new File(getDataFolder(), "save.yml");
     private YamlConfiguration lootFile = YamlConfiguration.loadConfiguration(this.lootYML);
     YamlConfiguration mobSaveFile = YamlConfiguration.loadConfiguration(this.saveYML);
-    private HashMap<Entity, Entity> mountList = new HashMap();
+    private final HashMap<Entity, Entity> mountList = new HashMap();
     ArrayList<Player> errorList = new ArrayList();
     ArrayList<Player> levitateList = new ArrayList();
+    private final List<String> allAbilitiesList = new ArrayList<>(Arrays.asList("confusing", "ghost", "morph", "mounted", "flying", "gravity", "firework", "necromancer", "archer", "molten", "mama", "potions", "explode", "berserk", "weakness", "vengeance", "webber", "storm", "sprint", "lifesteal", "ghastly", "ender", "cloaked", "1up", "sapper", "rust", "bullwark", "quicksand", "thief", "tosser", "withering", "blinding", "armoured", "poisonous"));
 
     public void onEnable() {
         //Register Events
@@ -1853,7 +1854,6 @@ public class infernal_mobs extends JavaPlugin implements Listener {
     }
 
     private List<String> getAbilities(int amount) {
-        List<String> allAbilitiesList = new ArrayList<>(Arrays.asList("confusing", "ghost", "morph", "mounted", "flying", "gravity", "firework", "necromancer", "archer", "molten", "mama", "potions", "explode", "berserk", "weakness", "vengeance", "webber", "storm", "sprint", "lifesteal", "ghastly", "ender", "cloaked", "1up", "sapper", "rust", "bullwark", "quicksand", "thief", "tosser", "withering", "blinding", "armoured", "poisonous"));
         List<String> abilityList = new ArrayList();
         int min = 1;
         for (int i = 0; i < amount; i++) {
@@ -2169,7 +2169,6 @@ public class infernal_mobs extends JavaPlugin implements Listener {
     }
 
     private boolean cSpawn(CommandSender sender, String mob, Location l, ArrayList<String> abList) {
-        //cspawn <mob> <world> <x> <y> <z> <ability> <ability>
         if ((EntityType.fromName(mob) != null)) {
             Entity ent = l.getWorld().spawnEntity(l, EntityType.fromName(mob));//
             InfernalMob newMob;
@@ -2199,7 +2198,6 @@ public class infernal_mobs extends JavaPlugin implements Listener {
     }
 
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args){
-        List<String> allAbilitiesList = new ArrayList<>(Arrays.asList("confusing", "ghost", "morph", "mounted", "flying", "gravity", "firework", "necromancer", "archer", "molten", "mama", "potions", "explode", "berserk", "weakness", "vengeance", "webber", "storm", "sprint", "lifesteal", "ghastly", "ender", "cloaked", "1up", "sapper", "rust", "bullwark", "quicksand", "thief", "tosser", "withering", "blinding", "armoured", "poisonous"));
         Set<String> commands = new HashSet<>(Arrays.asList("reload", "worldInfo", "error", "getloot", "setloot", "giveloot", "abilities", "showAbilities", "setInfernal", "spawn", "cspawn", "pspawn", "kill", "killall"));
         if (sender.hasPermission("infernal_mobs.commands")) {
 
@@ -2500,6 +2498,7 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                         }
                     } else if (((args.length >= 3) && (args[0].equalsIgnoreCase("spawn"))) || ((args[0].equalsIgnoreCase("cspawn")) && (args.length >= 6)) || ((args[0].equalsIgnoreCase("pspawn")) && (args.length >= 3))) {
                         if (args[0].equalsIgnoreCase("spawn")) {
+                            //im spawn <mob> <ability> <ability>
                             if ((EntityType.fromName(args[1]) != null)) {
                                 Location farSpawnLoc = player.getTargetBlock(null, 200).getLocation();
                                 farSpawnLoc.setY(farSpawnLoc.getY() + 1.0D);
@@ -2512,6 +2511,12 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                                         sender.sendMessage(args[(i + 2)] + " is not a valid ability!");
                                         return true;
                                     }
+                                }
+                                if (spesificAbList.isEmpty()) {
+                                    int min = getConfig().getInt("minpowers");
+                                    int max = getConfig().getInt("maxpowers");
+                                    int power = rand(min, max);
+                                    spesificAbList = new ArrayList<>(getAbilities(power));
                                 }
                                 InfernalMob newMob;
                                 UUID id = ent.getUniqueId();
@@ -2535,7 +2540,7 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                                 sender.sendMessage("Can't spawn a " + args[1] + "!");
                             }
                         } else if (args[0].equalsIgnoreCase("cspawn")) {
-                            //cspawn <mob> <world> <x> <y> <z> <ability> <ability>
+                            //im cspawn <mob> <world> <x> <y> <z> <ability> <ability>
                             if (Bukkit.getServer().getWorld(args[2]) == null) {
                                 sender.sendMessage(args[2] + " dose not exist!");
                                 return true;
@@ -2543,18 +2548,30 @@ public class infernal_mobs extends JavaPlugin implements Listener {
                             World world = Bukkit.getServer().getWorld(args[2]);
                             Location spoint = new Location(world, Integer.parseInt(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[5]));
                             ArrayList<String> abList = new ArrayList(Arrays.asList(args).subList(6, args.length));
+                            if (abList.isEmpty()) {
+                                int min = getConfig().getInt("minpowers");
+                                int max = getConfig().getInt("maxpowers");
+                                int power = rand(min, max);
+                                abList = new ArrayList<>(getAbilities(power));
+                            }
                             if (cSpawn(sender, args[1], spoint, abList)) {
                                 sender.sendMessage("Spawned a " + args[1] + " in " + args[2] + " at " + args[3] + ", " + args[4] + ", " + args[5] + " with the abilities:");
                                 sender.sendMessage(abList.toString());
                             }
                         } else {
-                            //pspawn <mob> <player> <ability> <ability>
+                            //im pspawn <mob> <player> <ability> <ability>
                             Player p = getServer().getPlayer(args[2]);
                             if (p == null) {
                                 sender.sendMessage(args[2] + " is not online!");
                                 return true;
                             }
                             ArrayList<String> abList = new ArrayList(Arrays.asList(args).subList(3, args.length));
+                            if (abList.isEmpty()) {
+                                int min = getConfig().getInt("minpowers");
+                                int max = getConfig().getInt("maxpowers");
+                                int power = rand(min, max);
+                                abList = new ArrayList<>(getAbilities(power));
+                            }
                             if (cSpawn(sender, args[1], p.getLocation(), abList)) {
                                 sender.sendMessage("Spawned a " + args[1] + " at " + p.getName() + " with the abilities:");
                                 sender.sendMessage(abList.toString());
